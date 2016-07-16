@@ -1,0 +1,35 @@
+{
+    "name": "illustrate",
+    "description": "Charting for JS",
+    "version": "0.0.1",
+    "authors": [
+        {
+            "name": "Matt Traynham",
+            "email": "skitch920@gmail.com"
+        }
+    ],
+    "keywords": [
+        "charting"
+    ],
+    "license": "Apache-2.0",
+    "repository": {
+        "type": "git",
+        "url": "git://github.com/mtraynham/illustrate.git"
+    },
+    "module": [
+        "globals",
+        "amd",
+        "node",
+        "es6"
+    ],
+    "ignore": [
+        "*",
+        "!dist/*",
+        "!LICENSE",
+        "!README.md"
+    ],
+    "main": [
+        "dist/illustrate.css",
+        "dist/illustrate.js"
+    ]
+}
