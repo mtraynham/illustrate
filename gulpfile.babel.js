@@ -11,9 +11,14 @@ const webpack = (src, opts, dest) =>
         .pipe(webpackStream(opts))
         .pipe(gulp.dest(dest));
 
-const test = (done, options = {}) =>
-    new Server(Object.assign({configFile: `${__dirname}/karma.conf.js`}, options), done)
-        .start();
+const test = (done, options = {}) => {
+    const server = new Server(Object.assign({configFile: `${__dirname}/karma.conf.js`}, options));
+    // TODO Circumvent 30 second wait
+    // https://github.com/karma-runner/karma/issues/1788
+    server.on('run_complete', (browsers, results) =>
+        done(results.error ? 'There are test failures' : null));
+    server.start();
+};
 
 const bump = type =>
     gulp.src([
@@ -45,16 +50,27 @@ gulp.task('uglify', ['lint'],
 
 // Test Task
 gulp.task('test', ['lint'], (done) =>
-    test(done, {singleRun: true}));
+    test(done));
 
 // Coverage Task
-gulp.task('coverage', ['test'], () =>
-    gulp.src('coverage/lcov.info')
-         .pipe($.coveralls()));
+gulp.task('coverage', ['lint'], (done) =>
+    test((error) => {
+        if (error) {
+            done(error);
+        } else {
+            gulp.src('coverage/lcov.info')
+                .pipe($.coveralls())
+                .on('end', done);
+        }
+    }, {webpack: wpack.coverage}));
 
 // Server Task
 gulp.task('server', ['lint'], (done) =>
-    test(done, {autoWatch: true, singleRun: false, browsers: ['Chrome']}));
+    test(done, {
+        autoWatch: true,
+        singleRun: false,
+        browsers: ['Chrome']
+    }));
 
 // Bump Tasks
 gulp.task('bump:major', bump.bind(this, 'major'));
