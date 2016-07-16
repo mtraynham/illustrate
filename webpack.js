@@ -6,7 +6,6 @@ import {join} from 'path';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
-import JasminePlugin from 'gulp-jasmine-browser/webpack/jasmine-plugin';
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
     pkg,
@@ -17,7 +16,7 @@ export const build = {
     entry: './index.js',
     output: {
         filename: 'illustrate.js',
-        library: 'bd',
+        library: 'illustrate',
         libraryTarget: 'umd',
         devtoolModuleFilenameTemplate: 'webpack:///illustrate/[resource-path]'
     },
@@ -50,12 +49,10 @@ export const uglify = merge({}, build, {
 });
 
 export const spec = merge({}, build, {
-    entry: null,
-    output: {
-        filename: 'spec.js'
-    },
-    plugins: [
-        new ExtractTextPlugin('illustrate.css'),
-        new JasminePlugin()
-    ]
+    devtool: 'inline-source-map',
+    module: {
+        preLoaders: [
+            {test: /\.js$/, exclude: /(node_modules|spec)/, loader: 'isparta-loader'}
+        ]
+    }
 });

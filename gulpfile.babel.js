@@ -1,7 +1,7 @@
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
-import {Instrumenter} from 'isparta';
 import webpackStream from 'webpack-stream';
+import {Server} from 'karma';
 import * as wpack from './webpack';
 
 const $ = gulpLoadPlugins();
@@ -11,10 +11,9 @@ const webpack = (src, opts, dest) =>
         .pipe(webpackStream(opts))
         .pipe(gulp.dest(dest));
 
-const test = () =>
-    webpack(['spec/*.js'], wpack.spec, '.tmp/')
-        .pipe($.jasmineBrowser.specRunner({console: true}))
-        .pipe($.jasmineBrowser.headless());
+const test = (done, options = {}) =>
+    new Server(Object.assign({configFile: `${__dirname}/karma.conf.js`}, options), done)
+        .start();
 
 const bump = type =>
     gulp.src([
@@ -45,25 +44,17 @@ gulp.task('uglify', ['lint'],
     webpack.bind(this, 'index.js', wpack.uglify, 'dist/'));
 
 // Test Task
-gulp.task('test', ['lint'],
-    test.bind(this));
+gulp.task('test', ['lint'], (done) =>
+    test(done, {singleRun: true}));
 
 // Coverage Task
-gulp.task('coverage', ['lint'], () =>
-    gulp.src(['lib/**/*.js'])
-        .pipe($.istanbul({instrumenter: Instrumenter}))
-        .pipe($.istanbul.hookRequire())
-        .on('finish', () =>
-            test()
-                .pipe($.istanbul.writeReports()) // Creating the reports after tests runned
-                .on('end', () =>
-                    gulp.src('coverage/lcov.info')
-                        .pipe($.coveralls()))));
+gulp.task('coverage', ['test'], () =>
+    gulp.src('coverage/lcov.info')
+         .pipe($.coveralls()));
 
-gulp.task('server', () =>
-    webpack(['spec/*.js'], Object.assign({}, wpack.spec, {watch: true}), '.tmp/')
-        .pipe($.jasmineBrowser.specRunner())
-        .pipe($.jasmineBrowser.server()));
+// Server Task
+gulp.task('server', ['lint'], (done) =>
+    test(done, {autoWatch: true, singleRun: false, browsers: ['Chrome']}));
 
 // Bump Tasks
 gulp.task('bump:major', bump.bind(this, 'major'));
