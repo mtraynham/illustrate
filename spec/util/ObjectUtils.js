@@ -4,7 +4,7 @@ import ObjectUtils from '../../lib/util/ObjectUtils';
 describe('ObjectUtils', () => {
     describe('.toString', () => {
         it('Date', () =>
-            assert.equal(ObjectUtils.toString(new Date(0)), '12/31/1969'));
+            assert.equal(ObjectUtils.toString(new Date(2016, 0, 1)), '01/01/2016'));
 
         it('Float', () =>
             assert.equal(ObjectUtils.toString(Number.MIN_VALUE), '0.00'));

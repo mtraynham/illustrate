@@ -239,7 +239,7 @@ describe('NumberUtils', () => {
                 assert.equal(NumberUtils.clamp(0, -5, -1), -1));
 
             it('1, -5, 0', () =>
-                assert.equal(NumberUtils.clamp(1, -5 , 0), 0));
+                assert.equal(NumberUtils.clamp(1, -5, 0), 0));
 
             it('-1, -5, -2', () =>
                 assert.equal(NumberUtils.clamp(-1, -5, -2), -2));
