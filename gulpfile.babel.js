@@ -54,15 +54,12 @@ gulp.task('test', ['lint'], (done) =>
 
 // Coverage Task
 gulp.task('coverage', ['lint'], (done) =>
-    test((error) => {
-        if (error) {
-            done(error);
-        } else {
-            gulp.src('coverage/lcov.info')
-                .pipe($.coveralls())
-                .on('end', done);
-        }
-    }, {webpack: wpack.coverage}));
+    test(done, {webpack: wpack.coverage}));
+
+// Coveralls Task
+gulp.task('coveralls', ['coverage'], () =>
+    gulp.src('coverage/lcov.info')
+        .pipe($.coveralls()));
 
 // Server Task
 gulp.task('server', ['lint'], (done) =>
