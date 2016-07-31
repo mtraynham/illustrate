@@ -2,18 +2,18 @@ import {assert} from 'chai';
 import NumberUtils from '../../lib/util/NumberUtils';
 
 describe('NumberUtils', () => {
-    describe('.floatFormat', () => {
+    describe('.format', () => {
         it('has a default', () =>
-            assert.equal(NumberUtils.floatFormat(0.1234567), '0.12'));
+            assert.equal(NumberUtils.format(0.1234567), '0.12'));
 
         it('can set a new default', () => {
-            NumberUtils.floatFormat = '.3f';
-            assert.equal(NumberUtils.floatFormat(0.1234567), '0.123');
+            NumberUtils.format = '.3f';
+            assert.equal(NumberUtils.format(0.1234567), '0.123');
         });
 
         it('can set reset the default', () => {
-            NumberUtils.floatFormat = null;
-            assert.equal(NumberUtils.floatFormat(0.1234567), '0.12');
+            NumberUtils.format = null;
+            assert.equal(NumberUtils.format(0.1234567), '0.12');
         });
     });
 
