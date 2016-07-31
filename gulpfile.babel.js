@@ -21,24 +21,16 @@ const test = (done, options = {}) => {
 };
 
 const bump = type =>
-    gulp.src([
-        './bower.json',
-        './package.json'
-    ])
-    .pipe($.bump({type}))
-    .pipe(gulp.dest('./'));
+    gulp.src(['./bower.json', './package.json'])
+        .pipe($.bump({type}))
+        .pipe(gulp.dest('./'));
 
 // Lint Task
 gulp.task('lint', () =>
-    gulp.src([
-        'gulpfile.babel.js',
-        'index.js',
-        'webpack.js',
-        '{lib,test}/**/*.js'
-    ])
-    .pipe($.eslint())
-    .pipe($.eslint.format())
-    .pipe($.eslint.failAfterError()));
+    gulp.src(['gulpfile.babel.js', 'index.js', 'webpack.js', '{lib,test}/**/*.js'])
+        .pipe($.eslint())
+        .pipe($.eslint.format())
+        .pipe($.eslint.failAfterError()));
 
 // Build Task
 gulp.task('build', ['lint'],
