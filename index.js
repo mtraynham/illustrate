@@ -1,1 +1,3 @@
-export {default as Chart} from './lib/Chart';
+import Chart from './lib/Chart';
+
+export default Chart;

@@ -1,4 +1,3 @@
-import pkg from './package';
 import merge from 'lodash/merge';
 import template from 'lodash/template';
 import {readFileSync} from 'fs';
@@ -6,6 +5,7 @@ import {join} from 'path';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import pkg from './package';
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
     pkg,

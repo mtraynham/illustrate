@@ -147,18 +147,18 @@ describe('NumberUtils', () => {
     const negligibleNumber = NumberUtils.negligibleNumber;
     describe('.isNegligible', () => {
         describe('true', () => {
-            it(negligibleNumber - (negligibleNumber / 10), () =>
+            it(`${negligibleNumber - (negligibleNumber / 10)}`, () =>
                 assert.equal(NumberUtils.isNegligible(negligibleNumber - (negligibleNumber / 10)), true));
 
-            it(-negligibleNumber + (negligibleNumber / 10), () =>
+            it(`${-negligibleNumber + (negligibleNumber / 10)}`, () =>
                 assert.equal(NumberUtils.isNegligible(-negligibleNumber + (negligibleNumber / 10)), true));
         });
 
         describe('false', () => {
-            it(negligibleNumber, () =>
+            it(`${negligibleNumber}`, () =>
                 assert.equal(NumberUtils.isNegligible(negligibleNumber), false));
 
-            it(-negligibleNumber, () =>
+            it(`${-negligibleNumber}`, () =>
                 assert.equal(NumberUtils.isNegligible(-negligibleNumber), false));
         });
     });
