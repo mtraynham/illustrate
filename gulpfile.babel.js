@@ -49,9 +49,9 @@ gulp.task('coverage', ['lint'], (done) =>
     test(done, {webpack: wpack.coverage}));
 
 // Coveralls Task
-gulp.task('coveralls', ['coverage'], () =>
+gulp.task('codecov', ['coverage'], () =>
     gulp.src('coverage/lcov.info')
-        .pipe($.coveralls()));
+        .pipe($.codecov({token: '741939b3-cc23-47a2-89e8-3c9b8b82d1ba'})));
 
 // Server Task
 gulp.task('server', ['lint'], (done) =>
