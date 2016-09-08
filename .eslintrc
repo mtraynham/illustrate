@@ -5,6 +5,7 @@
     },
     "extends": "airbnb",
     "rules": {
+        "class-methods-use-this": 1,
         "comma-dangle": [2, "never"],
         "func-names": 0,
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
