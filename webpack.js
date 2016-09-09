@@ -48,14 +48,6 @@ export const uglify = merge({}, build, {
     ]
 });
 
-export const spec = merge({}, build, {
+export const test = merge({}, build, {
     devtool: 'inline-source-map'
-});
-
-export const coverage = merge({}, build, {
-    module: {
-        preLoaders: [
-            {test: /\.js$/, exclude: /(node_modules|spec)/, loader: 'isparta-loader'}
-        ]
-    }
 });

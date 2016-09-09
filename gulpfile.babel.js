@@ -45,8 +45,13 @@ gulp.task('test', ['lint'], (done) =>
     test(done));
 
 // Coverage Task
-gulp.task('coverage', ['lint'], (done) =>
-    test(done, {webpack: wpack.coverage}));
+gulp.task('coverage', ['lint'], (done) => {
+    process.env.NODE_ENV = 'coverage'; // Triggers babel-plugin-istanbul
+    return test(done, {
+        webpack: wpack.build,
+        reporters: ['mocha', 'coverage']
+    });
+});
 
 // Coveralls Task
 gulp.task('codecov', ['coverage'], () =>

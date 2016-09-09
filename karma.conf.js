@@ -1,4 +1,4 @@
-import {spec} from './webpack';
+import {test} from './webpack';
 
 export default function (config) {
     config.set({
@@ -27,17 +27,17 @@ export default function (config) {
         preprocessors: {
             'spec/**/*.js': ['webpack', 'sourcemap']
         },
-        webpack: spec,
+        webpack: test,
         webpackServer: {
             noInfo: true
         },
         reporters: [
-            'mocha',
-            'coverage'
+            'mocha'
         ],
         coverageReporter: {
             dir: 'coverage',
             reporters: [
+                {type: 'text'},
                 {type: 'html', subdir: 'html'},
                 {type: 'lcovonly', subdir: '.'}
             ]
