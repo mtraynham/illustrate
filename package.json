@@ -64,6 +64,7 @@
         "gulp-codecov": "~2.0",
         "gulp-eslint": "~3.0",
         "gulp-load-plugins": "~1.2",
+        "gulp-jsdoc3": "~0.3",
         "gulp-util": "~3.0",
         "json-loader": "~0.5",
         "karma": "~1.2",

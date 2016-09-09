@@ -3,6 +3,7 @@ import gulpLoadPlugins from 'gulp-load-plugins';
 import webpackStream from 'webpack-stream';
 import {Server} from 'karma';
 import * as wpack from './webpack';
+import jsdocConfig from './jsdoc';
 
 const $ = gulpLoadPlugins();
 
@@ -31,6 +32,11 @@ gulp.task('lint', () =>
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.eslint.failAfterError()));
+
+// Docs Task
+gulp.task('docs', (cb) =>
+    gulp.src(['README.md', './lib/**/*.js'], {read: false})
+        .pipe($.jsdoc3(jsdocConfig, cb)));
 
 // Build Task
 gulp.task('build', ['lint'],
