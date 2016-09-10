@@ -63,7 +63,7 @@ export const debug = merge({}, build, {
         publicPath: 'test/',
         pathinfo: true,
         library: undefined,
-        libraryTarget: undefined,
+        libraryTarget: undefined
     },
     plugins: [
         new ExtractTextPlugin('illustrate.css'),
