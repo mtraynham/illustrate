@@ -1,4 +1,4 @@
-import {test} from './webpack';
+import {karma} from './webpack';
 
 export default function (config) {
     config.set({
@@ -27,7 +27,7 @@ export default function (config) {
         preprocessors: {
             'spec/**/*.js': ['webpack', 'sourcemap']
         },
-        webpack: test,
+        webpack: karma,
         webpackServer: {
             noInfo: true
         },

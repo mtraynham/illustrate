@@ -1,10 +1,11 @@
 import merge from 'lodash/merge';
 import template from 'lodash/template';
 import {readFileSync} from 'fs';
-import {join} from 'path';
+import {join, resolve} from 'path';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
+import HtmlWebpackPlugin from 'html-webpack-plugin';
 import pkg from './package';
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
@@ -48,6 +49,29 @@ export const uglify = merge({}, build, {
     ]
 });
 
-export const test = merge({}, build, {
+export const karma = merge({}, build, {
     devtool: 'inline-source-map'
+});
+
+export const debug = merge({}, build, {
+    cache: true,
+    debug: true,
+    devtool: 'inline-sourcemap',
+    entry: './debug/index.js',
+    output: {
+        path: resolve('./test/'),
+        publicPath: 'test/',
+        pathinfo: true,
+        filename: 'illustrate.[hash].js',
+        library: undefined,
+        libraryTarget: undefined,
+        devtoolModuleFilenameTemplate: 'webpack:///illustrate/[resource-path]'
+    },
+    plugins: [
+        new ExtractTextPlugin('illustrate.css'),
+        new HtmlWebpackPlugin({
+            port: 3000,
+            template: resolve('./debug/index.ejs')
+        })
+    ]
 });

@@ -1,18 +1,21 @@
 import gulp from 'gulp';
 import gulpLoadPlugins from 'gulp-load-plugins';
+import open from 'open';
+import webpack from 'webpack';
 import webpackStream from 'webpack-stream';
+import WebpackDevServer from 'webpack-dev-server';
 import {Server} from 'karma';
-import * as wpack from './webpack';
+import * as webpackConfig from './webpack';
 import jsdocConfig from './jsdoc';
 
 const $ = gulpLoadPlugins();
 
-const webpack = (src, opts, dest) =>
+const wpack = (src, opts, dest) =>
     gulp.src(src)
         .pipe(webpackStream(opts))
         .pipe(gulp.dest(dest));
 
-const test = (done, options = {}) => {
+const karma = (done, options = {}) => {
     const server = new Server(Object.assign({configFile: `${__dirname}/karma.conf.js`}, options));
     // TODO Circumvent 30 second wait
     // https://github.com/karma-runner/karma/issues/1788
@@ -40,21 +43,29 @@ gulp.task('docs', (cb) =>
 
 // Build Task
 gulp.task('build', ['lint'],
-    webpack.bind(this, 'index.js', wpack.build, 'dist/'));
+    wpack.bind(this, 'index.js', webpackConfig.build, 'dist/'));
 
 // Uglify Task
 gulp.task('uglify', ['lint'],
-    webpack.bind(this, 'index.js', wpack.uglify, 'dist/'));
+    wpack.bind(this, 'index.js', webpackConfig.uglify, 'dist/'));
 
 // Test Task
-gulp.task('test', ['lint'], (done) =>
-    test(done));
+gulp.task('karma', ['lint'], (done) =>
+    karma(done));
+
+// Karma Task
+gulp.task('karma-debug', ['lint'], (done) =>
+    karma(done, {
+        autoWatch: true,
+        singleRun: false,
+        browsers: ['Chrome']
+    }));
 
 // Coverage Task
 gulp.task('coverage', ['lint'], (done) => {
     process.env.NODE_ENV = 'coverage'; // Triggers babel-plugin-istanbul
-    return test(done, {
-        webpack: wpack.build,
+    return karma(done, {
+        webpack: webpackConfig.build,
         reporters: ['mocha', 'coverage']
     });
 });
@@ -65,11 +76,16 @@ gulp.task('codecov', ['coverage'], () =>
         .pipe($.codecov({token: '741939b3-cc23-47a2-89e8-3c9b8b82d1ba'})));
 
 // Server Task
-gulp.task('server', ['lint'], (done) =>
-    test(done, {
-        autoWatch: true,
-        singleRun: false,
-        browsers: ['Chrome']
+gulp.task('server', () =>
+    new WebpackDevServer(webpack(webpackConfig.debug), {
+        publicPath: `/${webpackConfig.debug.output.publicPath}`,
+        stats: {colors: true},
+        historyApiFallback: {index: `/${webpackConfig.debug.output.publicPath}`}
+    }).listen(3000, 'localhost', (err) => {
+        if (err) {
+            throw new $.util.PluginError('webpack-dev-server', err);
+        }
+        open(`http://localhost:3000/webpack-dev-server/${webpackConfig.debug.output.publicPath}`);
     }));
 
 // Bump Tasks
