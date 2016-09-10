@@ -62,10 +62,8 @@ export const debug = merge({}, build, {
         path: resolve('./test/'),
         publicPath: 'test/',
         pathinfo: true,
-        filename: 'illustrate.[hash].js',
         library: undefined,
         libraryTarget: undefined,
-        devtoolModuleFilenameTemplate: 'webpack:///illustrate/[resource-path]'
     },
     plugins: [
         new ExtractTextPlugin('illustrate.css'),
