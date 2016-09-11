@@ -1,0 +1,2 @@
+- [Karma/Jasmine 30 second wait completion](https://github.com/karma-runner/karma/issues/1788)
+- [JSDoc setter/getter eslint validation](https://github.com/eslint/eslint/issues/5891)

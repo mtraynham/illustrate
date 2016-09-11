@@ -37,9 +37,12 @@ gulp.task('lint', () =>
         .pipe($.eslint.failAfterError()));
 
 // Docs Task
-gulp.task('docs', (cb) =>
+gulp.task('docs', (cb) => {
+    // No return - Error: task completion callback called too many times
+    // https://github.com/SBoudrias/gulp-istanbul/issues/22
     gulp.src(['README.md', './lib/**/*.js'], {read: false})
-        .pipe($.jsdoc3(jsdocConfig, cb)));
+        .pipe($.jsdoc3(jsdocConfig, cb));
+});
 
 // Build Task
 gulp.task('build', ['lint'],

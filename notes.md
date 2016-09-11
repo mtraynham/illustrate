@@ -1,1 +1,0 @@
-- [JSDoc setter/getter eslint validation](https://github.com/eslint/eslint/issues/5891)
