@@ -53,11 +53,11 @@ gulp.task('uglify', ['lint'],
     wpack.bind(this, 'index.js', webpackConfig.uglify, 'dist/'));
 
 // Test Task
-gulp.task('karma', ['lint'], (done) =>
+gulp.task('karma', ['lint'], done =>
     karma(done));
 
 // Karma Task
-gulp.task('karma-debug', ['lint'], (done) =>
+gulp.task('karma-debug', ['lint'], done =>
     karma(done, {
         autoWatch: true,
         singleRun: false,
