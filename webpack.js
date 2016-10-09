@@ -6,7 +6,7 @@ import BannerPlugin from 'webpack/lib/BannerPlugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
-import pkg from './package';
+import pkg from './package.json';
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
     pkg,
@@ -28,12 +28,12 @@ export const build = {
     ],
     module: {
         preLoaders: [
-            {test: /\.js$/, exclude: /node_modules/, loaders: ['eslint-loader']}
+            {test: /\.js$/, exclude: /node_modules/, loader: 'eslint'}
         ],
         loaders: [
-            {test: /\.json$/, loader: 'json-loader'},
-            {test: /\.js$/, loader: 'babel-loader'},
-            {test: /\.(sass|scss)$/, loader: ExtractTextPlugin.extract('style-loader', 'css-loader', 'sass-loader')}
+            {test: /\.json$/, loader: 'json'},
+            {test: /\.js$/, loader: 'babel'},
+            {test: /\.(sass|scss)$/, loader: ExtractTextPlugin.extract('style', ['css', 'sass'])}
         ]
     }
 };

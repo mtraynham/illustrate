@@ -6,7 +6,7 @@ import webpackStream from 'webpack-stream';
 import WebpackDevServer from 'webpack-dev-server';
 import {Server} from 'karma';
 import * as webpackConfig from './webpack';
-import jsdocConfig from './jsdoc';
+import jsdocConfig from './jsdoc.json';
 
 const $ = gulpLoadPlugins();
 
