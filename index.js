@@ -11,4 +11,5 @@ export {default as RangeFilter} from './lib/filter/RangeFilter';
 export {default as ShouldFilter} from './lib/filter/ShouldFilter';
 export {default as TermFilter} from './lib/filter/BooleanFilter';
 
-export {default as Chart} from './lib/Chart';
+export {default as Chart} from './lib/chart/Chart';
+export {default as Bar} from './lib/chart/Bar';

@@ -1,6 +1,6 @@
 import Chance from 'chance';
 import scaleLinear from 'd3-scale/src/linear';
-import Chart from '../lib/Chart';
+import Chart from '../lib/chart/Bar';
 
 // Test Data
 const chance = new Chance();
