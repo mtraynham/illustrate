@@ -1,21 +1,28 @@
 import {assert} from 'chai';
+import {format as defaultLocaleFormat} from 'd3-format/src/defaultLocale';
 import NumberUtils from '../../lib/util/NumberUtils';
-
-const MAX_SAFE_INTEGER = 'MAX_SAFE_INTEGER' in Number ? Number.MAX_SAFE_INTEGER : 9007199254740991;
-const MIN_SAFE_INTEGER = 'MIN_SAFE_INTEGER' in Number ? Number.MIN_SAFE_INTEGER : -MAX_SAFE_INTEGER;
-const EPSILON = 'EPSILON' in Number ? Number.EPSILON : 2.220446049250313e-16;
 
 describe('NumberUtils', () => {
     describe('.format', () => {
         it('has a default', () =>
             assert.equal(NumberUtils.format(0.1234567), '0.12'));
 
-        it('can set a new default', () => {
+        it('can set a new string default', () => {
             NumberUtils.format = '.3f';
             assert.equal(NumberUtils.format(0.1234567), '0.123');
         });
 
-        it('can set reset the default', () => {
+        it('can set reset the string default', () => {
+            NumberUtils.format = null;
+            assert.equal(NumberUtils.format(0.1234567), '0.12');
+        });
+
+        it('can set a new format default', () => {
+            NumberUtils.format = defaultLocaleFormat('.3f');
+            assert.equal(NumberUtils.format(0.1234567), '0.123');
+        });
+
+        it('can set reset the format default', () => {
             NumberUtils.format = null;
             assert.equal(NumberUtils.format(0.1234567), '0.12');
         });
@@ -54,8 +61,8 @@ describe('NumberUtils', () => {
             it('Number.NaN', () =>
                 assert.equal(NumberUtils.isNumber(Number.NaN), true));
 
-            it('Number.EPSILON', () =>
-                assert.equal(NumberUtils.isNumber(EPSILON), true));
+            it('NumberUtils.EPSILON', () =>
+                assert.equal(NumberUtils.isNumber(NumberUtils.EPSILON), true));
 
             it('Number.POSITIVE_INFINITY', () =>
                 assert.equal(NumberUtils.isNumber(Number.POSITIVE_INFINITY), true));
@@ -69,11 +76,11 @@ describe('NumberUtils', () => {
             it('Number.MIN_VALUE', () =>
                 assert.equal(NumberUtils.isNumber(Number.MIN_VALUE), true));
 
-            it('Number.MAX_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isNumber(MAX_SAFE_INTEGER), true));
+            it('NumberUtils.MAX_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isNumber(NumberUtils.MAX_SAFE_INTEGER), true));
 
-            it('Number.MIN_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isNumber(MIN_SAFE_INTEGER), true));
+            it('NumberUtils.MIN_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isNumber(NumberUtils.MIN_SAFE_INTEGER), true));
         });
 
         describe('false', () => {
@@ -102,8 +109,8 @@ describe('NumberUtils', () => {
             it('Number.NaN', () =>
                 assert.equal(NumberUtils.isFloat(Number.NaN), true));
 
-            it('Number.EPSILON', () =>
-                assert.equal(NumberUtils.isFloat(EPSILON), true));
+            it('NumberUtils.EPSILON', () =>
+                assert.equal(NumberUtils.isFloat(NumberUtils.EPSILON), true));
 
             it('Number.MIN_VALUE', () =>
                 assert.equal(NumberUtils.isFloat(Number.MIN_VALUE), true));
@@ -125,11 +132,11 @@ describe('NumberUtils', () => {
             it('Number.MAX_VALUE', () =>
                 assert.equal(NumberUtils.isFloat(Number.MAX_VALUE), false));
 
-            it('Number.MAX_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isFloat(MAX_SAFE_INTEGER), false));
+            it('NumberUtils.MAX_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isFloat(NumberUtils.MAX_SAFE_INTEGER), false));
 
-            it('Number.MIN_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isFloat(MIN_SAFE_INTEGER), false));
+            it('NumberUtils.MIN_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isFloat(NumberUtils.MIN_SAFE_INTEGER), false));
         });
     });
 
@@ -150,11 +157,11 @@ describe('NumberUtils', () => {
             it('Number.MAX_VALUE', () =>
                 assert.equal(NumberUtils.isInteger(Number.MAX_VALUE), true));
 
-            it('Number.MAX_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isInteger(MAX_SAFE_INTEGER), true));
+            it('NumberUtils.MAX_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isInteger(NumberUtils.MAX_SAFE_INTEGER), true));
 
-            it('Number.MIN_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.isInteger(MIN_SAFE_INTEGER), true));
+            it('NumberUtils.MIN_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.isInteger(NumberUtils.MIN_SAFE_INTEGER), true));
         });
 
         describe('false', () => {
@@ -167,8 +174,8 @@ describe('NumberUtils', () => {
             it('Number.NaN', () =>
                 assert.equal(NumberUtils.isInteger(Number.NaN), false));
 
-            it('Number.EPSILON', () =>
-                assert.equal(NumberUtils.isInteger(EPSILON), false));
+            it('NumberUtils.EPSILON', () =>
+                assert.equal(NumberUtils.isInteger(NumberUtils.EPSILON), false));
 
             it('Number.MIN_VALUE', () =>
                 assert.equal(NumberUtils.isInteger(Number.MIN_VALUE), false));
@@ -211,8 +218,8 @@ describe('NumberUtils', () => {
             it('NaN', () =>
                 assert.equal(isNaN(NumberUtils.safeNumber(Number.NaN)), true));
 
-            it('Number.EPSILON', () =>
-                assert.equal(NumberUtils.safeNumber(EPSILON), EPSILON));
+            it('NumberUtils.EPSILON', () =>
+                assert.equal(NumberUtils.safeNumber(NumberUtils.EPSILON), NumberUtils.EPSILON));
 
             it('Number.POSITIVE_INFINITY', () =>
                 assert.equal(NumberUtils.safeNumber(Number.POSITIVE_INFINITY), Number.POSITIVE_INFINITY));
@@ -226,11 +233,11 @@ describe('NumberUtils', () => {
             it('Number.MIN_VALUE', () =>
                 assert.equal(NumberUtils.safeNumber(Number.MIN_VALUE), Number.MIN_VALUE));
 
-            it('Number.MAX_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.safeNumber(MAX_SAFE_INTEGER), MAX_SAFE_INTEGER));
+            it('NumberUtils.MAX_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.safeNumber(NumberUtils.MAX_SAFE_INTEGER), NumberUtils.MAX_SAFE_INTEGER));
 
-            it('Number.MIN_SAFE_INTEGER', () =>
-                assert.equal(NumberUtils.safeNumber(MIN_SAFE_INTEGER), MIN_SAFE_INTEGER));
+            it('NumberUtils.MIN_SAFE_INTEGER', () =>
+                assert.equal(NumberUtils.safeNumber(NumberUtils.MIN_SAFE_INTEGER), NumberUtils.MIN_SAFE_INTEGER));
         });
 
         describe('returns no default with 0', () => {
