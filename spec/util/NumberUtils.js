@@ -1,46 +1,46 @@
 import {assert} from 'chai';
 import {format as defaultLocaleFormat} from 'd3-format/src/defaultLocale';
-import NumberUtils from '../../lib/util/NumberUtils';
+import * as NumberUtils from '../../lib/util/NumberUtils';
 
 describe('NumberUtils', () => {
     describe('.format', () => {
         it('has a default', () =>
-            assert.equal(NumberUtils.format(0.1234567), '0.12'));
+            assert.equal(NumberUtils.defaultFormat()(0.1234567), '0.12'));
 
         it('can set a new string default', () => {
-            NumberUtils.format = '.3f';
-            assert.equal(NumberUtils.format(0.1234567), '0.123');
+            NumberUtils.defaultFormat('.3f');
+            assert.equal(NumberUtils.defaultFormat()(0.1234567), '0.123');
         });
 
         it('can set reset the string default', () => {
-            NumberUtils.format = null;
-            assert.equal(NumberUtils.format(0.1234567), '0.12');
+            NumberUtils.defaultFormat(null);
+            assert.equal(NumberUtils.defaultFormat()(0.1234567), '0.12');
         });
 
         it('can set a new format default', () => {
-            NumberUtils.format = defaultLocaleFormat('.3f');
-            assert.equal(NumberUtils.format(0.1234567), '0.123');
+            NumberUtils.defaultFormat(defaultLocaleFormat('.3f'));
+            assert.equal(NumberUtils.defaultFormat()(0.1234567), '0.123');
         });
 
         it('can set reset the format default', () => {
-            NumberUtils.format = null;
-            assert.equal(NumberUtils.format(0.1234567), '0.12');
+            NumberUtils.defaultFormat(null);
+            assert.equal(NumberUtils.defaultFormat()(0.1234567), '0.12');
         });
     });
 
     describe('.negligibleNumber', () => {
         it('has a default', () =>
-            assert.equal(NumberUtils.negligibleNumber, 1e-10));
+            assert.equal(NumberUtils.negligibleNumber(), 1e-10));
 
         it('can set a new default', () => {
             const newNegligibleNumber = 5;
-            NumberUtils.negligibleNumber = newNegligibleNumber;
-            assert.equal(NumberUtils.negligibleNumber, newNegligibleNumber);
+            NumberUtils.negligibleNumber(newNegligibleNumber);
+            assert.equal(NumberUtils.negligibleNumber(), newNegligibleNumber);
         });
 
         it('can set reset the default', () => {
-            NumberUtils.negligibleNumber = null;
-            assert.equal(NumberUtils.negligibleNumber, 1e-10);
+            NumberUtils.negligibleNumber(null);
+            assert.equal(NumberUtils.negligibleNumber(), 1e-10);
         });
     });
 
@@ -182,7 +182,7 @@ describe('NumberUtils', () => {
         });
     });
 
-    const negligibleNumber = NumberUtils.negligibleNumber;
+    const negligibleNumber = NumberUtils.negligibleNumber();
     describe('.isNegligible', () => {
         describe('true', () => {
             it(`${negligibleNumber - (negligibleNumber / 10)}`, () =>
