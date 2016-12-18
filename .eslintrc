@@ -10,6 +10,7 @@
         "comma-dangle": [2, "never"],
         "func-names": 0,
         "import/no-extraneous-dependencies": ["error", {"devDependencies": true}],
+        "import/prefer-default-export": 1,
         "indent": [2, 4, {"SwitchCase": 1}],
         "max-len": [2, 140],
         "no-underscore-dangle": 0,
