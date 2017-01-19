@@ -3,6 +3,7 @@ import template from 'lodash/template';
 import {readFileSync} from 'fs';
 import {join, resolve} from 'path';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
+import LoaderOptionsPlugin from 'webpack/lib/LoaderOptionsPlugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
@@ -14,7 +15,7 @@ const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))
 });
 
 export const build = {
-    entry: './index.js',
+    entry: resolve('./index.js'),
     output: {
         filename: 'illustrate.js',
         library: 'illustrate',
@@ -23,17 +24,17 @@ export const build = {
     },
     devtool: 'source-map',
     plugins: [
-        new ExtractTextPlugin('illustrate.css'),
-        new BannerPlugin(banner, {raw: true})
+        new ExtractTextPlugin({filename: 'illustrate.css', disable: false, allChunks: true}),
+        new BannerPlugin({banner, raw: true})
     ],
     module: {
-        preLoaders: [
-            {test: /\.js$/, exclude: /node_modules/, loader: 'eslint'}
-        ],
-        loaders: [
-            {test: /\.json$/, loader: 'json'},
-            {test: /\.js$/, loader: 'babel'},
-            {test: /\.(sass|scss)$/, loader: ExtractTextPlugin.extract('style', ['css', 'sass'])}
+        rules: [
+            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', loader: 'eslint-loader'},
+            {test: /\.js$/, loader: 'babel-loader'},
+            {
+                test: /\.(sass|scss)$/,
+                loader: ExtractTextPlugin.extract({fallbackLoader: 'style-loader', loader: ['css-loader', 'sass-loader']})
+            }
         ]
     }
 };
@@ -43,9 +44,9 @@ export const uglify = merge({}, build, {
         filename: 'illustrate.min.js'
     },
     plugins: [
-        new ExtractTextPlugin('illustrate.min.css'),
+        new ExtractTextPlugin({filename: 'illustrate.min.css', disable: false, allChunks: true}),
         new UglifyJsPlugin(),
-        new BannerPlugin(banner, {raw: true})
+        new BannerPlugin({banner, raw: true})
     ]
 });
 
@@ -55,9 +56,8 @@ export const karma = merge({}, build, {
 
 export const debug = merge({}, build, {
     cache: true,
-    debug: true,
     devtool: 'inline-sourcemap',
-    entry: './debug/index.js',
+    entry: resolve('./debug/index.js'),
     output: {
         path: resolve('./test/'),
         publicPath: 'test/',
@@ -66,7 +66,8 @@ export const debug = merge({}, build, {
         libraryTarget: undefined
     },
     plugins: [
-        new ExtractTextPlugin('illustrate.css'),
+        new LoaderOptionsPlugin({debug: true}),
+        new ExtractTextPlugin({filename: 'illustrate.css', disable: false, allChunks: true}),
         new HtmlWebpackPlugin({
             port: 3000,
             template: resolve('./debug/index.ejs')

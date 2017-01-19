@@ -70,7 +70,7 @@
         "eslint-plugin-import": "~2.2",
         "eslint-plugin-jsx-a11y": "~3.0",
         "eslint-plugin-react": "~6.9",
-        "extract-text-webpack-plugin": "~1.0",
+        "extract-text-webpack-plugin": "beta",
         "gulp": "~3.9",
         "gulp-bump": "~2.5",
         "gulp-codecov": "~2.0",
@@ -79,7 +79,6 @@
         "gulp-jsdoc3": "~1.0",
         "gulp-util": "~3.0",
         "html-webpack-plugin": "~2.26",
-        "json-loader": "~0.5",
         "karma": "~1.4",
         "karma-chai": "~0.1",
         "karma-chrome-launcher": "~2.0",
@@ -97,8 +96,8 @@
         "phantomjs-polyfill": "~0.0",
         "sass-loader": "~4.1",
         "style-loader": "~0.13",
-        "webpack": "~1.14",
+        "webpack": "beta",
         "webpack-stream": "~3.2",
-        "webpack-dev-server": "~1.16"
+        "webpack-dev-server": "beta"
     }
 }
