@@ -2,11 +2,13 @@ import merge from 'lodash/merge';
 import template from 'lodash/template';
 import {readFileSync} from 'fs';
 import {join, resolve} from 'path';
+import cssnano from 'cssnano';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
-import LoaderOptionsPlugin from 'webpack/lib/LoaderOptionsPlugin';
-import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
 import HtmlWebpackPlugin from 'html-webpack-plugin';
+import OccurrenceOrderPlugin from 'webpack/lib/optimize/OccurrenceOrderPlugin';
+import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
+import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import pkg from './package.json';
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
@@ -14,8 +16,29 @@ const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))
     date: new Date()
 });
 
+const bannerPlugin = new BannerPlugin({banner, raw: true});
+const extractTextPluginOptions = {
+    filename: '[name].css',
+    disable: false,
+    allChunks: true
+};
+const extractTextPlugin = new ExtractTextPlugin(extractTextPluginOptions);
+const extractTextMinifyPlugin = new ExtractTextPlugin(Object.assign({}, extractTextPluginOptions, {filename: '[name].min.css'}));
+const htmlPlugin = new HtmlWebpackPlugin({
+    template: resolve('./debug/index.ejs'),
+    port: 3000
+});
+const occurrenceOrderPlugin = new OccurrenceOrderPlugin();
+const optimizeAssetsCssPlugin = new OptimizeCssAssetsPlugin({
+    cssProcessor: cssnano,
+    cssProcessorOptions: {discardComments: {removeAll: true}}
+});
+const uglifyJsPlugin = new UglifyJsPlugin({sourceMap: false, comments: false});
+
 export const build = {
-    entry: resolve('./index.js'),
+    entry: {
+        illustrate: resolve('./index.js')
+    },
     output: {
         filename: 'illustrate.js',
         library: 'illustrate',
@@ -24,8 +47,9 @@ export const build = {
     },
     devtool: 'source-map',
     plugins: [
-        new ExtractTextPlugin({filename: 'illustrate.css', disable: false, allChunks: true}),
-        new BannerPlugin({banner, raw: true})
+        bannerPlugin,
+        extractTextPlugin,
+        occurrenceOrderPlugin
     ],
     module: {
         rules: [
@@ -44,9 +68,11 @@ export const uglify = merge({}, build, {
         filename: 'illustrate.min.js'
     },
     plugins: [
-        new ExtractTextPlugin({filename: 'illustrate.min.css', disable: false, allChunks: true}),
-        new UglifyJsPlugin(),
-        new BannerPlugin({banner, raw: true})
+        bannerPlugin,
+        extractTextMinifyPlugin,
+        occurrenceOrderPlugin,
+        optimizeAssetsCssPlugin,
+        uglifyJsPlugin
     ]
 });
 
@@ -56,7 +82,7 @@ export const karma = merge({}, build, {
 
 export const debug = merge({}, build, {
     cache: true,
-    devtool: 'inline-sourcemap',
+    devtool: 'inline-source-map',
     entry: resolve('./debug/index.js'),
     output: {
         path: resolve('./test/'),
@@ -66,11 +92,9 @@ export const debug = merge({}, build, {
         libraryTarget: undefined
     },
     plugins: [
-        new LoaderOptionsPlugin({debug: true}),
-        new ExtractTextPlugin({filename: 'illustrate.css', disable: false, allChunks: true}),
-        new HtmlWebpackPlugin({
-            port: 3000,
-            template: resolve('./debug/index.ejs')
-        })
+        bannerPlugin,
+        extractTextPlugin,
+        htmlPlugin,
+        occurrenceOrderPlugin
     ]
 });
