@@ -1,7 +1,7 @@
-import merge from 'lodash/merge';
 import template from 'lodash/template';
 import {readFileSync} from 'fs';
 import {join, resolve} from 'path';
+import {strategy} from 'webpack-merge';
 import cssnano from 'cssnano';
 import BannerPlugin from 'webpack/lib/BannerPlugin';
 import ExtractTextPlugin from 'extract-text-webpack-plugin';
@@ -10,6 +10,8 @@ import OccurrenceOrderPlugin from 'webpack/lib/optimize/OccurrenceOrderPlugin';
 import OptimizeCssAssetsPlugin from 'optimize-css-assets-webpack-plugin';
 import UglifyJsPlugin from 'webpack/lib/optimize/UglifyJsPlugin';
 import pkg from './package.json';
+
+const merge = strategy(({plugins: 'replace', 'module.rules': 'replace'}));
 
 const banner = template(readFileSync(join(__dirname, 'LICENSE_BANNER'), 'utf8'))({
     pkg,
@@ -33,19 +35,19 @@ const optimizeAssetsCssPlugin = new OptimizeCssAssetsPlugin({
     cssProcessor: cssnano,
     cssProcessorOptions: {discardComments: {removeAll: true}}
 });
-const uglifyJsPlugin = new UglifyJsPlugin({sourceMap: false, comments: false});
+const uglifyJsPlugin = new UglifyJsPlugin({sourceMap: true, comments: false});
 
 export const build = {
+    devtool: 'source-map',
     entry: {
-        illustrate: resolve('./index.js')
+        [pkg.name]: resolve('./index.js')
     },
     output: {
-        filename: 'illustrate.js',
+        filename: '[name].js',
         library: 'illustrate',
         libraryTarget: 'umd',
-        devtoolModuleFilenameTemplate: 'webpack:///illustrate/[resource-path]'
+        devtoolModuleFilenameTemplate: `webpack:///${pkg.name}/[resource-path]`
     },
-    devtool: 'source-map',
     plugins: [
         bannerPlugin,
         extractTextPlugin,
@@ -65,7 +67,7 @@ export const build = {
 
 export const uglify = merge({}, build, {
     output: {
-        filename: 'illustrate.min.js'
+        filename: '[name].min.js'
     },
     plugins: [
         bannerPlugin,
@@ -77,17 +79,30 @@ export const uglify = merge({}, build, {
 });
 
 export const karma = merge({}, build, {
-    devtool: 'inline-source-map'
+    devtool: 'inline-source-map',
+    plugins: [
+        bannerPlugin,
+        occurrenceOrderPlugin
+    ],
+    module: {
+        rules: [
+            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', loader: 'eslint-loader'},
+            {test: /\.js$/, loader: 'babel-loader'},
+            {
+                test: /\.(sass|scss)$/,
+                use: ['style-loader', 'css-loader', 'sass-loader']
+            }
+        ]
+    }
 });
 
 export const debug = merge({}, build, {
     cache: true,
     devtool: 'inline-source-map',
-    entry: resolve('./debug/index.js'),
+    entry: {
+        [pkg.name]: resolve('./debug/index.js')
+    },
     output: {
-        path: resolve('./test/'),
-        publicPath: 'test/',
-        pathinfo: true,
         library: undefined,
         libraryTarget: undefined
     },

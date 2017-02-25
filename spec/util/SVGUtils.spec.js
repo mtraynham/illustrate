@@ -1,4 +1,3 @@
-import {assert} from 'chai';
 import select from 'd3-selection/src/select';
 import {calculateHeight, calculateWidth} from '../../lib/util/SVGUtils';
 
@@ -30,23 +29,23 @@ describe('SVGUtils', () => {
 
     describe('.calculateHeight', () => {
         it('div', () =>
-            assert.equal(calculateHeight(div.node()), divHeight));
+            expect(calculateHeight(div.node())).toEqual(divHeight));
 
         it('svg', () =>
-            assert.equal(calculateHeight(svg.node()), svgHeight));
+            expect(calculateHeight(svg.node())).toEqual(svgHeight));
 
         it('rect', () =>
-            assert.equal(calculateHeight(rect.node()), rectHeight));
+            expect(calculateHeight(rect.node())).toEqual(rectHeight));
     });
 
     describe('.calculateWidth', () => {
         it('div', () =>
-            assert.equal(calculateWidth(div.node()), divWidth));
+            expect(calculateWidth(div.node())).toEqual(divWidth));
 
         it('svg', () =>
-            assert.equal(calculateWidth(svg.node()), svgWidth));
+            expect(calculateWidth(svg.node())).toEqual(svgWidth));
 
         it('rect', () =>
-            assert.equal(calculateWidth(rect.node()), rectWidth));
+            expect(calculateWidth(rect.node())).toEqual(rectWidth));
     });
 });

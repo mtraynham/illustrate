@@ -9,20 +9,38 @@ import * as webpackConfig from './webpack';
 import jsdocConfig from './jsdoc.json';
 
 const $ = gulpLoadPlugins();
+const debugHost = '0.0.0.0';
+const debugPort = 3000;
+const debugPath = '';
 
-const wpack = (src, opts, dest) =>
+/**
+ * Run a webpack build
+ * @param {String} src
+ * @param {Object} opts
+ * @param {String} dest
+ * @returns {void}
+ */
+const webpackBuild = (src, opts, dest) =>
     gulp.src(src)
         .pipe(webpackStream(opts, webpack))
         .pipe(gulp.dest(dest));
 
-const karma = (done, options = {}) => {
+/**
+ * Run karma
+ * @param {Object} options
+ * @param {Function} [done]
+ * @returns {void}
+ */
+function karma (options, done) {
     const server = new Server(Object.assign({configFile: `${__dirname}/karma.conf.js`}, options));
-    // TODO Circumvent 30 second wait
+    // TODO Upstream: Circumvent 30 second wait
     // https://github.com/karma-runner/karma/issues/1788
-    server.on('run_complete', (browsers, results) =>
-        done(results.error ? 'There are test failures' : null));
-    server.start();
-};
+    if (done) {
+        server.on('run_complete', (browsers, results) =>
+            done(results.error ? 'There are test failures' : null));
+    }
+    return server.start();
+}
 
 const bump = type =>
     gulp.src(['./bower.json', './package.json'])
@@ -31,7 +49,7 @@ const bump = type =>
 
 // Lint Task
 gulp.task('lint', () =>
-    gulp.src(['gulpfile.babel.js', 'index.js', 'webpack.js', '{lib,test}/**/*.js'])
+    gulp.src(['gulpfile.babel.js', 'index.js', 'webpack.js', '{lib,spec}/**/*.js'])
         .pipe($.eslint())
         .pipe($.eslint.format())
         .pipe($.eslint.failAfterError()));
@@ -46,49 +64,54 @@ gulp.task('docs', (cb) => {
 
 // Build Task
 gulp.task('build', ['lint'],
-    wpack.bind(this, 'index.js', webpackConfig.build, 'dist/'));
+    webpackBuild.bind(this, 'index.js', webpackConfig.build, 'dist/'));
 
 // Uglify Task
 gulp.task('uglify', ['lint'],
-    wpack.bind(this, 'index.js', webpackConfig.uglify, 'dist/'));
-
-// Test Task
-gulp.task('karma', ['lint'], done =>
-    karma(done));
+    webpackBuild.bind(this, 'index.js', webpackConfig.uglify, 'dist/'));
 
 // Karma Task
-gulp.task('karma-debug', ['lint'], done =>
-    karma(done, {
-        autoWatch: true,
-        singleRun: false,
-        browsers: ['Chrome']
-    }));
+gulp.task('karma', ['lint'],
+    karma.bind(this, {}));
 
-// Coverage Task
-gulp.task('coverage', ['lint'], (done) => {
+// Karma Debug Task
+gulp.task('karma-debug', ['lint'],
+    karma.bind(this, {
+        reporters: ['spec', 'kjhtml'],
+        autoWatch: true,
+        singleRun: false
+    }, null));
+
+// Karma Coverage Task
+gulp.task('karma-coverage', ['lint'], (done) => {
     process.env.NODE_ENV = 'coverage'; // Triggers babel-plugin-istanbul
-    return karma(done, {
-        webpack: webpackConfig.build,
-        reporters: ['mocha', 'coverage']
-    });
+    return karma({
+        reporters: ['spec', 'coverage'],
+        coverageReporter: {
+            dir: './coverage',
+            reporters: [
+                {type: 'text'},
+                {type: 'html', subdir: 'html'},
+                {type: 'lcovonly', subdir: '.'}
+            ]
+        }
+    }, done);
 });
 
 // Coveralls Task
-gulp.task('codecov', ['coverage'], () =>
+gulp.task('codecov', ['karma-coverage'], () =>
     gulp.src('coverage/lcov.info')
-        .pipe($.codecov({token: '741939b3-cc23-47a2-89e8-3c9b8b82d1ba'})));
+        .pipe($.codecov({token: '855f4b40-9674-40cc-b852-e186c12a7f1d'})));
 
 // Server Task
 gulp.task('server', () =>
     new WebpackDevServer(webpack(webpackConfig.debug), {
-        publicPath: `/${webpackConfig.debug.output.publicPath}`,
-        stats: {colors: true},
-        historyApiFallback: {index: `/${webpackConfig.debug.output.publicPath}`}
-    }).listen(3000, 'localhost', (err) => {
-        if (err) {
-            throw new $.util.PluginError('webpack-dev-server', err);
+        stats: {colors: true}
+    }).listen(debugPort, debugHost, (error) => {
+        if (error) {
+            throw new $.util.PluginError('webpack-dev-server', error);
         }
-        open(`http://localhost:3000/webpack-dev-server/${webpackConfig.debug.output.publicPath}`);
+        open(`http://${debugHost}:${debugPort}/webpack-dev-server/${debugPath}`);
     }));
 
 // Bump Tasks
