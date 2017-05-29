@@ -55,11 +55,11 @@ export const build = {
     ],
     module: {
         rules: [
-            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', loader: 'eslint-loader'},
-            {test: /\.js$/, loader: 'babel-loader'},
+            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', use: 'eslint-loader'},
+            {test: /\.js$/, use: 'babel-loader'},
             {
                 test: /\.(sass|scss)$/,
-                loader: ExtractTextPlugin.extract({fallbackLoader: 'style-loader', loader: ['css-loader', 'sass-loader']})
+                use: ExtractTextPlugin.extract({fallback: 'style-loader', use: ['css-loader', 'sass-loader']})
             }
         ]
     }
@@ -86,8 +86,8 @@ export const karma = merge({}, build, {
     ],
     module: {
         rules: [
-            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', loader: 'eslint-loader'},
-            {test: /\.js$/, loader: 'babel-loader'},
+            {test: /\.js$/, exclude: /node_modules/, enforce: 'pre', use: 'eslint-loader'},
+            {test: /\.js$/, use: 'babel-loader'},
             {
                 test: /\.(sass|scss)$/,
                 use: ['style-loader', 'css-loader', 'sass-loader']

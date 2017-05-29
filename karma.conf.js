@@ -3,11 +3,10 @@ import {karma} from './webpack';
 export default function (config) {
     config.set({
         files: [
-            './node_modules/babel-polyfill/browser.js',
             'spec/index.js'
         ],
         browsers: [
-            'PhantomJS'
+            'ChromeHeadless'
         ],
         singleRun: true,
         frameworks: [
