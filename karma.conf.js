@@ -1,9 +1,15 @@
-import {karma} from './webpack';
+import {karma} from './webpack.config';
 
+/**
+ * Simple webpack karma build
+ * @param {Karma.Configuration} config
+ * @returns {void}
+ */
 export default function (config) {
     config.set({
         files: [
-            'spec/index.js'
+            // Load our root test module
+            './index.spec.ts'
         ],
         browsers: [
             'ChromeHeadless'
@@ -12,8 +18,11 @@ export default function (config) {
         frameworks: [
             'jasmine'
         ],
+        mime: {
+            'text/x-typescript': ['ts', 'tsx']
+        },
         preprocessors: {
-            'spec/index.js': ['webpack', 'sourcemap']
+            './index.spec.ts': ['webpack', 'sourcemap']
         },
         webpack: karma,
         webpackServer: {
